@@ -1,13 +1,15 @@
-
+import pandas as pd
 # Function to add past win rates for home and away teams
-def add_past_win_rate(df, win_rate_map):
-    df = df.copy()  # To avoid modifying the original DataFrame
+def add_past_win_rate(df,games_df):
+    
+    win_rate_map = get_home_team_win_rate(games_df)
     # Map past win rates for home teams
     df['home_team_past_win_rate'] = df.apply(
         lambda row: win_rate_map.get((row["home_team_id"], row["away_team_id"]), 0), axis=1)*100
 
-    df.to_csv("training_data.csv")
+    #df.to_csv("training_data.csv")
     return df
+
 
 #calculate team_wins
 def get_home_team_win_rate(games):

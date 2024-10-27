@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from sklearn.discriminant_analysis import StandardScaler
 from sklearn.ensemble import GradientBoostingClassifier, HistGradientBoostingClassifier, RandomForestClassifier, RandomForestRegressor
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LinearRegression
@@ -13,8 +14,11 @@ from sklearn.preprocessing import FunctionTransformer
 import numpy as np
 
 from get_features.drop_some_columns import condense_columns
+from get_features.get_player_avg_potential import get_player_potential_rows
 from get_features.get_player_avg_rating import add_players_avg_rating
 from get_features.get_player_work_rate import add_player_work_rate_columns
+from get_features.get_team_past_win_rate import add_past_win_rate
+from get_features.get_player_avg_crossing import get_team_total_crossings
 
 """
 def calculate_score(true_winner, predicted_winner, true_winby, predicted_winby):
@@ -177,6 +181,9 @@ def __main__():
     model_winby = make_pipeline(
         FunctionTransformer(add_player_work_rate_columns,kw_args={"players_df":players}),
         FunctionTransformer(add_players_avg_rating,kw_args={"players_df":players}),
+        FunctionTransformer(add_past_win_rate,kw_args={"games_df":games}),
+        FunctionTransformer(get_player_potential_rows,kw_args={"players_df":players}),
+        FunctionTransformer(get_team_total_crossings,kw_args={"players_df":players}),
         FunctionTransformer(condense_columns),
         SimpleImputer(strategy="mean"),
         XGBClassifier(
@@ -209,6 +216,9 @@ def __main__():
     model_winner = make_pipeline(
         FunctionTransformer(add_player_work_rate_columns,kw_args={"players_df":players}),
         FunctionTransformer(add_players_avg_rating,kw_args={"players_df":players}),
+        FunctionTransformer(add_past_win_rate,kw_args={"games_df":games}),
+        FunctionTransformer(get_player_potential_rows,kw_args={"players_df":players}),
+        FunctionTransformer(get_team_total_crossings,kw_args={"players_df":players}),
         FunctionTransformer(condense_columns),
         SimpleImputer(strategy="mean"),
         XGBRegressor()

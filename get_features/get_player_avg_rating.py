@@ -31,8 +31,8 @@ def add_players_avg_rating(df, players_df):
 
         # Ensure player IDs are of the same type as the keys in the dictionary
         player_avg_ratings[col + "_avg_rating"] = player_id_col.map(
-            lambda v: player_avg_overall_rating_dict.get(int(v), 50) if pd.notna(v) and v is not None else 50
-        )  # Default to 30 if not found or if v is NaN
+            lambda v: player_avg_overall_rating_dict.get(int(v), 0) if pd.notna(v) and v is not None else 0
+        )  
 
     # Concatenate the player average ratings to the main DataFrame
     df = pd.concat([df, player_avg_ratings], axis=1)
@@ -41,8 +41,8 @@ def add_players_avg_rating(df, players_df):
     home_rating_cols = [col + "_avg_rating" for col in home_players_cols]
     away_rating_cols = [col + "_avg_rating" for col in away_players_cols]
 
-    df["avg_home_players_rating"] = df[home_rating_cols].mean(axis=1) 
-    df["avg_away_players_rating"] = df[away_rating_cols].mean(axis=1)
+    df["avg_players_rating_difference"] = df[home_rating_cols].mean(axis=1) -  df[away_rating_cols].mean(axis=1)
+    #df["avg_away_players_rating"] = df[away_rating_cols].mean(axis=1)
 
     # Drop the extra columns from player_avg_ratings
     df.drop(columns=player_avg_ratings.columns, inplace=True)
