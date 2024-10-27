@@ -1,0 +1,21 @@
+import pandas as pd
+
+# adds teams total crossigns
+def add_player_crossing_row(df, player_crossings_map):
+    home_players_cols = ["home_player_" + str(i) for i in range(1, 12)]
+    away_players_cols = ["away_player_" + str(i) for i in range(1, 12)]
+    
+    # Initialize total_crossings to zero
+    df["total_crossings_home"] = 0
+    df["total_crossings_away"] = 0
+
+    for col in home_players_cols:
+        # Extract player_id from the column name (e.g., "home_player_1" to get player_id)
+        player_id_col = pd.to_numeric(df[col], errors='coerce')
+        df["total_crossings_home"] += player_id_col.map(lambda b: player_crossings_map.get(b,0))
+    for col in away_players_cols:
+        # Extract player_id from the column name (e.g., "home_player_1" to get player_id)
+        player_id_col = pd.to_numeric(df[col], errors='coerce')
+        df["total_crossings_away"] += player_id_col.map(lambda b: player_crossings_map.get(b,0))
+        
+    return df
