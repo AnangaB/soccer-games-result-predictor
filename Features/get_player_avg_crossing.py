@@ -6,7 +6,7 @@ The number of crossings per player is calculated by taking an average of their n
 df is the input dataset, where features will be added to
 players_df contains data on players and their crossings, for different years they have played
 """
-def get_team_total_crossings(df, players_df):
+def get_team_avg_crossings(df, players_df):
     home_players_cols = ["home_player_" + str(i) for i in range(1, 12)]
     away_players_cols = ["away_player_" + str(i) for i in range(1, 12)]
     player_cols = home_players_cols + away_players_cols

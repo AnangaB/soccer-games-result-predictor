@@ -8,7 +8,7 @@ from sklearn.preprocessing import FunctionTransformer
 
 #import custom features getting functions
 from Features.drop_some_columns import condense_columns
-from Features.get_player_avg_crossing import get_team_total_crossings
+from Features.get_player_avg_crossing import get_team_avg_crossings
 from Features.get_player_avg_rating import add_team_avg_rating
 from Features.get_player_work_rate import add_player_work_rate_columns
 
@@ -44,7 +44,7 @@ def __main__():
     model_winby = make_pipeline(
         FunctionTransformer(add_player_work_rate_columns, kw_args={"players_df": players}),
         FunctionTransformer(add_team_avg_rating, kw_args={"players_df": players}),
-        FunctionTransformer(get_team_total_crossings, kw_args={"players_df": players}),
+        FunctionTransformer(get_team_avg_crossings, kw_args={"players_df": players}),
         FunctionTransformer(condense_columns),
         SimpleImputer(strategy="mean"),
         XGBRegressor(
@@ -82,7 +82,7 @@ def __main__():
     model_winner = make_pipeline(
         FunctionTransformer(add_player_work_rate_columns, kw_args={"players_df": players}),
         FunctionTransformer(add_team_avg_rating, kw_args={"players_df": players}),
-        FunctionTransformer(get_team_total_crossings, kw_args={"players_df": players}),
+        FunctionTransformer(get_team_avg_crossings, kw_args={"players_df": players}),
         FunctionTransformer(condense_columns),
         SimpleImputer(strategy="mean"),
         XGBRegressor(
