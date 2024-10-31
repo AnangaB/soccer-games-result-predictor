@@ -1,22 +1,19 @@
 import pandas as pd
 
-def get_avg_player_work_rates(players_df):
-    
-    players_copy = players_df.copy()
-    attack_work_rate_map = {"medium": 75, "low": 0, "high": 200}
-    defense_work_rate_map = {"medium": 75, "low": 0, "high": 200}
 
-    # Map work rates for both attacking and defensive work rates
-    players_copy["attacking_work_rate"] = players_copy["attacking_work_rate"].map(lambda r: attack_work_rate_map.get(r, 50))
-    players_copy["defensive_work_rate"] = players_copy["defensive_work_rate"].map(lambda r: defense_work_rate_map.get(r, 50)) 
+""" Function to incorporate the work rate stats of each team has. There is an attack and defensive work rate.
+The attack and defensive work rate values per player is calculated by taking an average of these values, in all their playing years.
 
-    # Group by player_id and calculate the mean for work rates
-    avg_work_rates_df = players_copy[["player_id", "attacking_work_rate", "defensive_work_rate"]].groupby("player_id").agg({
-        "attacking_work_rate": "mean", 
-        "defensive_work_rate": "mean"
-    })
+The features are added are:
+    - The difference of average team attack work rate between home and away team
+    - The difference of average team defense work rate between home and away team
+    - The difference between the attack work rate of each team's top avg attack rate player
 
-    return avg_work_rates_df
+
+df is the input dataset, where features will be added to
+players_df contains data on players and their overall_rating, for different years they have played
+"""
+
 
 def add_player_work_rate_columns(df, players_df):
     home_players_cols = ["home_player_" + str(i) for i in range(1, 12)]
@@ -53,10 +50,29 @@ def add_player_work_rate_columns(df, players_df):
     df["avg_defense_work_rate_difference"] = df[home_defense_work_rate_cols].mean(axis=1) - df[away_defense_work_rate_cols].mean(axis=1)
 
     df["max_attack_work_rate_difference"] = df[home_attack_work_rate_cols].max(axis=1) - df[away_attack_work_rate_cols].max(axis=1)
-    df["max_defense_work_rate_difference"] = df[home_defense_work_rate_cols].max(axis=1) - df[away_defense_work_rate_cols].max(axis=1)
+    #df["max_defense_work_rate_difference"] = df[home_defense_work_rate_cols].max(axis=1) - df[away_defense_work_rate_cols].max(axis=1)
 
     # Drop the extra columns from player_work_rates
     df.drop(columns=player_work_rates.columns, inplace=True)
 
     return df
 
+""" Returns a dataframe consisting of player id and their attack and defense work rate values
+"""
+def get_avg_player_work_rates(players_df):
+    
+    players_copy = players_df.copy()
+    attack_work_rate_map = {"medium": 50, "low": 0, "high": 100}
+    defense_work_rate_map = {"medium": 50, "low": 0, "high": 100}
+
+    # Map work rates for both attacking and defensive work rates
+    players_copy["attacking_work_rate"] = players_copy["attacking_work_rate"].map(lambda r: attack_work_rate_map.get(r,50))
+    players_copy["defensive_work_rate"] = players_copy["defensive_work_rate"].map(lambda r: defense_work_rate_map.get(r, 50)) 
+
+    # Group by player_id and calculate the mean for work rates
+    avg_work_rates_df = players_copy[["player_id", "attacking_work_rate", "defensive_work_rate"]].groupby("player_id").agg({
+        "attacking_work_rate": "mean", 
+        "defensive_work_rate": "mean"
+    })
+
+    return avg_work_rates_df

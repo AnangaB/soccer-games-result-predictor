@@ -1,15 +1,11 @@
 import pandas as pd
 
-def get_player_avg_crossing_map(players_df):
-    players_copy = players_df.copy()
+""" Function to add the average number of crossings each team has. 
+The number of crossings per player is calculated by taking an average of their number of crossings, in all their playing years.
 
-    avg_player_crossing_df = players_copy[["player_id", "crossing"]].groupby("player_id").agg({
-        "crossing": "mean",
-    })
-
-    avg_player_crossing_map = avg_player_crossing_df["crossing"].to_dict()
-    return avg_player_crossing_map
-
+df is the input dataset, where features will be added to
+players_df contains data on players and their crossings, for different years they have played
+"""
 def get_team_total_crossings(df, players_df):
     home_players_cols = ["home_player_" + str(i) for i in range(1, 12)]
     away_players_cols = ["away_player_" + str(i) for i in range(1, 12)]
@@ -29,7 +25,8 @@ def get_team_total_crossings(df, players_df):
     home_crossing_cols = [col + "_crossing" for col in home_players_cols]
     away_crossing_cols = [col + "_crossing" for col in away_players_cols]
 
-    df["total_team_avg_crossings_difference"] = df[home_crossing_cols].sum(axis=1) -  df[away_crossing_cols].sum(axis=1)
+    df["avg_home_crossing"] = df[home_crossing_cols].mean(axis=1)
+    df["avg_away_crossing"] = df[away_crossing_cols].mean(axis=1)
 
     # Drop the extra columns from player_avg_ratings
     df.drop(columns=player_total_crossings.columns, inplace=True)
@@ -37,3 +34,14 @@ def get_team_total_crossings(df, players_df):
 
     return df
     
+""" Returns a dict mapping player id to their average of number of crossings, in all their playing years.
+"""
+def get_player_avg_crossing_map(players_df):
+    players_copy = players_df.copy()
+
+    avg_player_crossing_df = players_copy[["player_id", "crossing"]].groupby("player_id").agg({
+        "crossing": "mean",
+    })
+
+    avg_player_crossing_map = avg_player_crossing_df["crossing"].to_dict()
+    return avg_player_crossing_map
